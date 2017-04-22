@@ -9,29 +9,34 @@ request = sys.argv[1]
 
 # obtain new_katherine from k.txt
 
-# regexp pattern
+# pattern: only keep alphanumeric
 pattern = re.compile('[\W_]+')
-# clean it up!
+# clean up data string
 with open('k.txt', 'r') as f:
     new_katherine = tuple([int(val) for val in
                             [pattern.sub('', substr) for substr in
-                                f.readline()[1:-1].split(',')]
-                          ])
-
+                                f.readline()[1:-1].split(',')]])
+# top, right, bottom, left
 print(new_katherine)
 
 # retrieve crown
 crown = cv2.imread('./img/crown.png')
 crown = cv2.resize(crown, (100, 50))
-ktop = new_katherine[:-2]
+
+ktop = new_katherine[0]
+kleft = new_katherine[3]
 
 # retrieve original img in cv form
 img = cv2.imread('./img/'+request)
 # crown dims
 crown_height, crown_width = crown.shape[:-1]
-# overlay handling alpha channel
-for c in range(0,3):
-    img[ktop[1]:crown_height, (ktop[0]-ktop[2]):crown_width, c] = crown[:,:,c] * (crown[:,:,3]/255.0) +  img[ktop[1]:ktop[1]+crown.shape[0], (ktop[0]-ktop[2]):ktop[0]-ktop[2]+crown.shape[1], c] * (1.0 - crown[:,:,3]/255.0)
+
+print(img[(ktop - crown_height):ktop , kleft:kleft+crown_width])
+
+# place crown
+img[(ktop - crown_height):ktop , kleft:kleft+crown_width] = crown
+
+print(img[(ktop - crown_height):ktop , kleft:kleft+crown_width])
 
 # show
-cv2.imshow(img)
+cv2.imwrite('kqueen.png',img)
