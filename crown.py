@@ -1,6 +1,11 @@
 import cv2
 import re
 import sys
+import numpy as np
+from random import choice
+
+# font
+font = cv2.FONT_HERSHEY_PLAIN
 
 request = sys.argv[1]
 
@@ -31,12 +36,22 @@ img = cv2.imread('./img/'+request)
 # crown dims
 crown_height, crown_width = crown.shape[:-1]
 
-print(img[(ktop - crown_height):ktop , kleft:kleft+crown_width])
-
 # place crown
 img[(ktop - crown_height):ktop , kleft:kleft+crown_width] = crown
 
-print(img[(ktop - crown_height):ktop , kleft:kleft+crown_width])
+# add random motivational text
+phrases = ['werk', 'slay', 'hbd', 'woo']
+
+# image dimensions
+width, height = img.shape[:-1]
+
+# sprinkle motivation
+for phrase in phrases:
+    cv2.putText(img, phrase, (choice(range(width - 60)),choice(range(height - 60))),
+                font, 5,(0,255,255),8,cv2.LINE_AA)
+
+# pick coordinates
+
 
 # show
 cv2.imwrite('kqueen.png',img)
